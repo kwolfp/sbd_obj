@@ -8,6 +8,7 @@ import org.garret.perst.StorageFactory;
 import pl.edu.wat.entity.Czat;
 import pl.edu.wat.entity.Grupa;
 import pl.edu.wat.entity.Osoba;
+import pl.edu.wat.entity.Strona;
 import pl.edu.wat.entity.Wiadomosc;
 
 /**
@@ -24,8 +25,12 @@ public class Main extends Persistent {
         System.out.println("Przed modyfikacją:");
         database.beginTransaction();
         IterableIterator<Grupa> groups = database.getRecords(Grupa.class);
+        IterableIterator<Strona> strona = database.getRecords(Strona.class);
         for(Grupa g : groups) {
             g.printInfo();
+        }
+        for (Strona s : strona){
+            s.printInfo();
         }
         database.commitTransaction();
 
@@ -40,6 +45,9 @@ public class Main extends Persistent {
         groups = database.getRecords(Grupa.class);
         for(Grupa g : groups) {
             g.printInfo();
+        }
+        for (Strona s : strona){
+            s.printInfo();
         }
         database.commitTransaction();
 

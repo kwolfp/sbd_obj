@@ -1,13 +1,12 @@
 package pl.edu.wat;
 
 import org.garret.perst.Database;
-import org.garret.perst.IterableIterator;
 import org.garret.perst.Storage;
 import org.garret.perst.StorageFactory;
 import pl.edu.wat.entity.Grupa;
 import pl.edu.wat.entity.Osoba;
-
-import java.lang.reflect.Array;
+import pl.edu.wat.entity.Strona;
+import java.text.ParseException;
 import java.util.Arrays;
 
 /**
@@ -20,7 +19,8 @@ public class InsertDataMain {
     private Database database;
 
 
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws ParseException {
         InsertDataMain insertDataMain = new InsertDataMain("sbd_obj");
         insertDataMain.insertDataAndClose();
     }
@@ -37,12 +37,13 @@ public class InsertDataMain {
         }
     }
 
-    private void insertData() {
+    private void insertData(){
         this.insertOsoba();
         this.insertGrupa();
+        this.insertStrona();
     }
 
-    private void insertDataAndClose() {
+    private void insertDataAndClose(){
         this.insertData();
         this.closeDb();
     }
@@ -68,6 +69,13 @@ public class InsertDataMain {
         insertOsoba("Marvis", "Klosterman");
         insertOsoba("Keri", "Rolling");
         insertOsoba("Jan", "Hennessee");
+        insertOsoba("John ", "Puccino");
+        insertOsoba("Marek", "Puzyn");
+        insertOsoba("John", "Brymer");
+        insertOsoba("Anita", "Vardaman");
+        insertOsoba("Anita", "Mohtashami");
+        insertOsoba("Nick", "Talley");
+
     }
 
     private void insertOsoba(String name, String lastName) {
@@ -84,7 +92,7 @@ public class InsertDataMain {
         database.beginTransaction();
         try {
             Grupa grupa = createGrupa("SBD OBJ", "https://api.adorable.io/avatars/285/sbd_obj.png", new Osoba[]{getOsobaByNameAndLastName("Ellan", "Mummert"),
-                    getOsobaByNameAndLastName("Candelaria", "Lubin"),
+                    getOsobaByNameAndLastName("Nick", "Lubin"),
                     getOsobaByNameAndLastName("Spencer", "Rudolph"),
                     getOsobaByNameAndLastName("Teri", "Dinh"),
                     getOsobaByNameAndLastName("Delphia", "Goins")});
@@ -110,5 +118,26 @@ public class InsertDataMain {
         }
         return (Osoba) this.database.select(Osoba.class, "name='"+name+"' and lastname='"+lastName+"'").first();
     }
+
+    private Strona createStrona(String about, Osoba[] followers){
+        Strona s = new Strona();
+        s.setAbout(about);
+        s.getFollowers().addAll(Arrays.asList(followers));
+        return s;
+    }
+
+    private void insertStrona() {
+        database.beginTransaction();
+        try {
+            Strona strona = createStrona("Strona 1 SBD OBJ ", new Osoba[]{getOsobaByNameAndLastName("John", "Puccino")});
+            database.addRecord(strona);
+            database.commitTransaction();
+        } catch (Exception x) {
+            database.rollbackTransaction();
+            x.printStackTrace();
+        }
+    }
+
+
 
 }
