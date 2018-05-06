@@ -17,4 +17,8 @@ import org.garret.perst.Persistent;
 public class Osoba extends Persistent {
    private String name;
    private String lastname;
+
+    public Osoba(Osoba osobaByNameAndLastName) {
+
+    }
 }

@@ -3,11 +3,16 @@ package pl.edu.wat;
 import org.garret.perst.Database;
 import org.garret.perst.Storage;
 import org.garret.perst.StorageFactory;
+import pl.edu.wat.entity.Czat;
 import pl.edu.wat.entity.Grupa;
 import pl.edu.wat.entity.Osoba;
 import pl.edu.wat.entity.Strona;
+import pl.edu.wat.entity.Wiadomosc;
+
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by Kamil Przyborowski
@@ -18,6 +23,8 @@ public class InsertDataMain {
     private Storage storage;
     private Database database;
 
+    String pattern = "yyyy-MM-dd";
+    SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 
     public static void main(String[] args) throws ParseException {
@@ -39,6 +46,7 @@ public class InsertDataMain {
 
     private void insertData(){
         this.insertOsoba();
+        this.insertWiadomosc();
         this.insertGrupa();
         this.insertStrona();
     }
@@ -111,6 +119,33 @@ public class InsertDataMain {
         g.getMemebers().addAll(Arrays.asList(memebers));
         return g;
     }
+    private Wiadomosc createWiadomosc(String content, Date date, Osoba author){
+        Wiadomosc w = new Wiadomosc();
+        w.setContent(content);
+        w.setDate(date);
+        w.setAuthor(author);
+        return w;
+    }
+
+    private void insertWiadomosc() {
+        database.beginTransaction();
+        try {
+            Wiadomosc wiadomosc = createWiadomosc("CONTENT", format.parse("2008-02-02"), new Osoba(getOsobaByNameAndLastName("Nick","Lubin")));
+            Wiadomosc wiadomosc2 = createWiadomosc("CONTENT NR. 2", format.parse("2011-08-22"), new Osoba(getOsobaByNameAndLastName("Delphia","Goins")));
+            Wiadomosc wiadomosc3 = createWiadomosc("CONTENT NR. 3", format.parse("2011-05-12"), new Osoba(getOsobaByNameAndLastName("Teri","Dinh")));
+            Wiadomosc wiadomosc4 = createWiadomosc("CONTENT NR. 4", format.parse("2012-12-07"), new Osoba(getOsobaByNameAndLastName("Katia","Grider")));
+            Wiadomosc wiadomosc5 = createWiadomosc("CONTENT NR. 5", format.parse("2012-05-09"), new Osoba(getOsobaByNameAndLastName("Spencer","Rudolph")));
+            database.addRecord(wiadomosc5);
+            database.addRecord(wiadomosc4);
+            database.addRecord(wiadomosc3);
+            database.addRecord(wiadomosc2);
+            database.addRecord(wiadomosc);
+            database.commitTransaction();
+        } catch (Exception x) {
+            database.rollbackTransaction();
+            x.printStackTrace();
+        }
+    }
 
     private Osoba getOsobaByNameAndLastName(String name, String lastName) {
         if(this.database == null) {
@@ -137,7 +172,6 @@ public class InsertDataMain {
             x.printStackTrace();
         }
     }
-
 
 
 }
